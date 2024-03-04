@@ -1,10 +1,13 @@
 package net.botwithus.api.game.hud.prayer;
 
-import net.botwithus.api.util.StringFormatter;
+import net.botwithus.api.util.StringUtils;
+import net.botwithus.rs3.game.js5.types.EnumType;
 import net.botwithus.rs3.game.js5.types.StructType;
 import net.botwithus.rs3.game.js5.types.configs.ConfigManager;
 import net.botwithus.rs3.game.queries.builders.components.ComponentQuery;
 import net.botwithus.rs3.game.vars.VarManager;
+
+import java.util.Locale;
 
 public enum NormalBook implements PrayerAbility {
     THICK_SKIN(14541, 16739),
@@ -90,6 +93,21 @@ public enum NormalBook implements PrayerAbility {
 
     @Override
     public String getName() {
-        return StringFormatter.toTitleCase(name());
+        var structResult = getStruct().getParams().getOrDefault(2794, null).toString();
+        if (structResult != null) {
+            return structResult;
+        }
+
+        EnumType type = ConfigManager.getEnumType(1534);
+        if (type != null) {
+            var names = type.getOutputs();
+            var lowerCaseNames = names.stream().map(i -> i.toString().toLowerCase(Locale.ROOT)).toList();
+            for (int i = 0; i < lowerCaseNames.size(); i++) {
+                if (lowerCaseNames.get(i).contains(name().toLowerCase(Locale.ROOT).replace("_", " "))) {
+                    return names.get(i).toString();
+                }
+            }
+        }
+        return StringUtils.toTitleCase(name()).replace("_", " ");
     }
 }

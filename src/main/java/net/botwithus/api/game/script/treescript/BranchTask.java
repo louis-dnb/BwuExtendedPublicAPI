@@ -21,6 +21,9 @@ public class BranchTask extends TreeTask {
     public BranchTask(Script script, String desc) {
         super(script, desc);
     }
+    public BranchTask(Script script, String desc, String definedIn) {
+        super(script, desc, definedIn);
+    }
 
     public BranchTask(Script script, String desc, Callable<TreeTask> successTask, TreeTask failureTask, Permissive[]... permissives) {
         super(script, desc);
@@ -42,6 +45,30 @@ public class BranchTask extends TreeTask {
     }
     public BranchTask(Script script, String desc, TreeTask successTask, TreeTask failureTask, Permissive[]... permissives) {
         super(script, desc);
+        this.permissives = permissives;
+        this.successTask = successTask;
+        this.failureTask = failureTask;
+    }
+    public BranchTask(Script script, String desc, String definedIn, Callable<TreeTask> successTask, TreeTask failureTask, Permissive[]... permissives) {
+        super(script, desc, definedIn);
+        this.permissives = permissives;
+        this.successTaskC = successTask;
+        this.failureTask = failureTask;
+    }
+    public BranchTask(Script script, String desc, String definedIn, TreeTask successTask, Callable<TreeTask> failureTask, Permissive[]... permissives) {
+        super(script, desc, definedIn);
+        this.permissives = permissives;
+        this.successTask = successTask;
+        this.failureTaskC = failureTask;
+    }
+    public BranchTask(Script script, String desc, String definedIn, Callable<TreeTask> successTask, Callable<TreeTask> failureTask, Permissive[]... permissives) {
+        super(script, desc, definedIn);
+        this.permissives = permissives;
+        this.successTaskC = successTask;
+        this.failureTaskC = failureTask;
+    }
+    public BranchTask(Script script, String desc, String definedIn, TreeTask successTask, TreeTask failureTask, Permissive[]... permissives) {
+        super(script, desc, definedIn);
         this.permissives = permissives;
         this.successTask = successTask;
         this.failureTask = failureTask;
@@ -124,4 +151,25 @@ public class BranchTask extends TreeTask {
         this.permissives = permissives;
     }
 
+    public void updateResultExpirationTime(int millis) {
+        updateResultExpirationTime(this, millis);
+    }
+
+    public static void updateResultExpirationTime(BranchTask task, int millis) {
+        if (task == null) {
+            return; // End of branch
+        }
+
+        for (var group : task.getPermissives()) {
+            for (var perm : group) {
+                perm.getLastResult().setExpirationTime(millis);
+            }
+        }
+
+        // Recursively collect descriptions from success and failure branches if not a leaf
+        if (!task.isLeaf()) {
+            updateResultExpirationTime((BranchTask)task.successTask(), millis);
+            updateResultExpirationTime((BranchTask)task.failureTask(), millis);
+        }
+    }
 }

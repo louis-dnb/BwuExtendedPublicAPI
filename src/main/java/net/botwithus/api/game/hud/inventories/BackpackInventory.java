@@ -28,7 +28,14 @@ public class BackpackInventory extends Inventory {
     @Override
     public boolean interact(String name, int option) {
         ScriptConsole.println("[xApi][BackpackInventory#interact(String name, int option)]: Searching for: " + name);
+        var id = getId();
+        ScriptConsole.println("[xApi][BackpackInventory#interact(String name, int option)]: Interface ID: " + id);
         ResultSet<Item> results = InventoryItemQuery.newQuery(getId()).name(name).results();
+        int i = 0;
+        for (var item : results) {
+            ScriptConsole.println("[xApi][BackpackInventory#interact(String name, int option)]: Item[" + i + "]: " + item);
+            i++;
+        }
         Item item = results.first();
         if (item != null) {
             ScriptConsole.println("[xApi][BackpackInventory#interact(String name, int option)]: Found item: " + item.getName());

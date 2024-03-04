@@ -17,6 +17,10 @@ public class Result<T> {
         resultTime = System.currentTimeMillis();
     }
 
+    public void setExpirationTime(int expirationTime) {
+        this.expirationTime = expirationTime;
+    }
+
     public boolean isValidResult() {
         return System.currentTimeMillis() - resultTime <= expirationTime;
     }

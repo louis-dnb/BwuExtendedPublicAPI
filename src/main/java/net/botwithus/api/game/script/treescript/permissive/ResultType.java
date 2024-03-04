@@ -1,6 +1,6 @@
 package net.botwithus.api.game.script.treescript.permissive;
 
-import net.botwithus.api.util.StringFormatter;
+import net.botwithus.api.util.StringUtils;
 
 public enum ResultType {
     MET,
@@ -13,6 +13,6 @@ public enum ResultType {
     }
 
     public String getName() {
-        return StringFormatter.toTitleCase(name());
+        return StringUtils.toTitleCase(name());
     }
 }
