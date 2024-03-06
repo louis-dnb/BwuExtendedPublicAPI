@@ -80,6 +80,11 @@ public class Dialog {
                 result = ComponentQuery.newQuery(1189).componentIndex(3).results().first();
                 if (result != null && result.getText() != null) {
                     return result.getText();
+                } else {
+                    result = ComponentQuery.newQuery(1186).componentIndex(3).results().first();
+                    if (result != null && result.getText() != null) {
+                        return result.getText();
+                    }
                 }
             }
         }
