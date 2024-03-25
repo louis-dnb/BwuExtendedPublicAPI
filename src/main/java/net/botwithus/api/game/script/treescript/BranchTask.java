@@ -15,6 +15,7 @@ import lombok.SneakyThrows;
 public class BranchTask extends TreeTask {
     private static final FluentLogger log = FluentLogger.forEnclosingClass();
     private Permissive[][] permissives = new Permissive[][]{new Permissive[0]};
+    private Callable<Permissive[][]> permissivesC;
     private TreeTask successTask, failureTask;
     private Callable<TreeTask> successTaskC, failureTaskC;
 
@@ -49,6 +50,12 @@ public class BranchTask extends TreeTask {
         this.successTask = successTask;
         this.failureTask = failureTask;
     }
+    public BranchTask(Script script, String desc, TreeTask successTask, TreeTask failureTask, Callable<Permissive[][]> permissives) {
+        super(script, desc);
+        this.permissivesC = permissives;
+        this.successTask = successTask;
+        this.failureTask = failureTask;
+    }
     public BranchTask(Script script, String desc, String definedIn, Callable<TreeTask> successTask, TreeTask failureTask, Permissive[]... permissives) {
         super(script, desc, definedIn);
         this.permissives = permissives;
@@ -70,6 +77,12 @@ public class BranchTask extends TreeTask {
     public BranchTask(Script script, String desc, String definedIn, TreeTask successTask, TreeTask failureTask, Permissive[]... permissives) {
         super(script, desc, definedIn);
         this.permissives = permissives;
+        this.successTask = successTask;
+        this.failureTask = failureTask;
+    }
+    public BranchTask(Script script, String desc, String definedIn, TreeTask successTask, TreeTask failureTask, Callable<Permissive[][]> permissives) {
+        super(script, desc, definedIn);
+        this.permissivesC = permissives;
         this.successTask = successTask;
         this.failureTask = failureTask;
     }
@@ -101,7 +114,11 @@ public class BranchTask extends TreeTask {
         Permissive curPerm = null;
 
         try {
-            for (var group : permissives) {
+            if (getPermissives().length == 0) {
+                return false; // No permissives to validate, so the branch is invalid
+            }
+
+            for (var group : getPermissives()) {
                 groupIsValid = true; // Assume the group is valid initially
                 for (var perm : group) {
                     curPerm = perm;
@@ -144,6 +161,13 @@ public class BranchTask extends TreeTask {
     }
 
     public Permissive[][] getPermissives() {
+        if (permissivesC != null) {
+            try {
+                permissives = permissivesC.call();
+            } catch (Exception e){
+                log.atSevere().withCause(e).log("Failed to determine the result of the Callable<permissivesC>");
+            }
+        }
         return permissives;
     }
 

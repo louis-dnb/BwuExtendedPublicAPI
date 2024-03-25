@@ -34,6 +34,7 @@ public class BackpackInventory extends Inventory {
         int i = 0;
         for (var item : results) {
             ScriptConsole.println("[xApi][BackpackInventory#interact(String name, int option)]: Item[" + i + "]: " + item);
+            ScriptConsole.println("[xApi][BackpackInventory#interact(String name, int option)]: Item[" + i + "] : " + item);
             i++;
         }
         Item item = results.first();
