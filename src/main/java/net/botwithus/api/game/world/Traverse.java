@@ -41,7 +41,7 @@ public class Traverse {
     }
 
     public static boolean to(Area area) {
-        return to(area.getRandomCoordinate());
+        return to(area.getRandomWalkableCoordinate());
     }
 
     public static boolean bresenhamWalkTo(Coordinate coordinate, boolean minimap, int stepSize) {

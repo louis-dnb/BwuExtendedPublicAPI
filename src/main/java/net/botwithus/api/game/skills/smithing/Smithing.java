@@ -9,6 +9,8 @@ import net.botwithus.rs3.game.skills.Skills;
 import net.botwithus.rs3.game.vars.VarManager;
 import net.botwithus.rs3.script.ScriptConsole;
 
+import java.util.Arrays;
+
 /**
  * Exposes information related to the players inventory in regard to smithing
  */
@@ -87,7 +89,7 @@ public final class Smithing {
     public static int getMaximumHeat(int slot) {
         EnumType etype = ConfigManager.getEnumType(15095);
         int key = VarManager.getInvVarbit(93, slot, 43222);
-        if (etype == null) {
+        if (etype == null || etype.getInputs().size() <= key) {
             return -1;
         }
         var value = etype.getInputs().get(key);
@@ -99,6 +101,7 @@ public final class Smithing {
             return -1;
         }
         int[] ints = script2546(itemType);
+        ScriptConsole.println("[Smithing] Maximum heat for item: " + itemType.getName() + " is : " + Arrays.toString(ints));
         return ints[0];
     }
 
