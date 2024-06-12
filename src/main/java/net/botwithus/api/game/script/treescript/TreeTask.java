@@ -176,4 +176,29 @@ public abstract class TreeTask implements ITreeTask {
         }
         return task;
     }
+
+    /**
+     * Returns the task that matches the specified description.
+     *
+     * @param description The description to match.
+     */
+    public TreeTask findTaskByDescription(String description) {
+        if (description == null || description.isEmpty()) {
+            return null;
+        }
+
+        if (this.getDesc().contains(description)) {
+            return this;
+        }
+        var checkSuccess = this.successTask().findTaskByDescription(description);
+        if (checkSuccess != null) {
+            return checkSuccess;
+        }
+        var checkFailure = this.failureTask().findTaskByDescription(description);
+        if (checkFailure != null) {
+            return checkFailure;
+        }
+        return null;
+    }
+
 }

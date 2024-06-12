@@ -26,13 +26,14 @@ public class Traverse {
 
         var pCoord = player.getCoordinate();
         if (pCoord != null && (pCoord.getX() > 6400 || pCoord.getY() > 12800)) {
-            ScriptConsole.println("[Traverse#to]: Player is in an instance, attempting to walk to %d, %d", coordinate.getX(), coordinate.getY());
+            ScriptConsole.println("[Traverse#to]: Player is in an instance, attempting to walk to %s, %s", coordinate.getX(), coordinate.getY());
             return Traverse.bresenhamWalkTo(coordinate, true, RandomGenerator.nextInt(8, 14));
         }
-        var webMovement =  Movement.traverse(NavPath.resolve(coordinate));
-        ScriptConsole.println("[Traverse#to]: Player is not in an instance, attempting to walk to %d, %d | %s", coordinate.getX(), coordinate.getY(), webMovement);
+        TraverseEvent.State webMovement;
+        ScriptConsole.println("[Traverse#to]: Player is not in an instance, attempting to walk to %s, %s | %s", coordinate.getX(), coordinate.getY(), webMovement = Movement.traverse(NavPath.resolve(coordinate)));
+
         if (webMovement == null || webMovement == TraverseEvent.State.FAILED || webMovement == TraverseEvent.State.NO_PATH) {
-            ScriptConsole.println("[Traverse#to]: WebMovement failed, attempting to walk to via bresenham %d, %d", coordinate.getX(), coordinate.getY());
+            ScriptConsole.println("[Traverse#to]: WebMovement failed, attempting to walk to via bresenham %s, %s", coordinate.getX(), coordinate.getY());
             return Traverse.bresenhamWalkTo(coordinate, true, RandomGenerator.nextInt(8, 14));
         }
 
@@ -55,13 +56,13 @@ public class Traverse {
             int dy = coordinate.getY() - currentCoordinate.getY();
             int distance = (int)Math.hypot(dx, dy);
             if (distance > stepSize) {
-                ScriptConsole.println("[Traverse#bresenhamWalkTo]: Attempting to walk to %d, %d, using Bresenham's line algorithm. Distance of %s exceeded stepSize of %s", coordinate.getX(), coordinate.getY(), distance, stepSize);
+                ScriptConsole.println("[Traverse#bresenhamWalkTo]: Attempting to walk to %s, %s, using Bresenham's line algorithm. Distance of %s exceeded stepSize of %s", coordinate.getX(), coordinate.getY(), distance, stepSize);
                 int stepX = currentCoordinate.getX() + dx * stepSize / distance;
                 int stepY = currentCoordinate.getY() + dy * stepSize / distance;
                 Traverse.walkTo(new Coordinate(stepX, stepY, currentCoordinate.getZ()), minimap);
                 return true;
             } else {
-                ScriptConsole.println("[Traverse#bresenhamWalkTo]: Attempting to walk to %d, %d, using Bresenham's line algorithm. Distance of %s is within stepSize of %s", coordinate.getX(), coordinate.getY(), distance, stepSize);
+                ScriptConsole.println("[Traverse#bresenhamWalkTo]: Attempting to walk to %s, %s, using Bresenham's line algorithm. Distance of %s is within stepSize of %s", coordinate.getX(), coordinate.getY(), distance, stepSize);
                 Traverse.walkTo(coordinate, minimap);
                 return true;
             }
