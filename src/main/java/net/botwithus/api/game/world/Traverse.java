@@ -27,14 +27,14 @@ public class Traverse {
         var pCoord = player.getCoordinate();
         if (pCoord != null && (pCoord.getX() > 6400 || pCoord.getY() > 12800)) {
             ScriptConsole.println("[Traverse#to]: Player is in an instance, attempting to walk to %s, %s", coordinate.getX(), coordinate.getY());
-            return Traverse.bresenhamWalkTo(coordinate, true, RandomGenerator.nextInt(8, 14));
+            return Traverse.bresenhamWalkTo(coordinate, true, RandomGenerator.nextInt(12, 20));
         }
         TraverseEvent.State webMovement;
         ScriptConsole.println("[Traverse#to]: Player is not in an instance, attempting to walk to %s, %s | %s", coordinate.getX(), coordinate.getY(), webMovement = Movement.traverse(NavPath.resolve(coordinate)));
 
         if (webMovement == null || webMovement == TraverseEvent.State.FAILED || webMovement == TraverseEvent.State.NO_PATH) {
             ScriptConsole.println("[Traverse#to]: WebMovement failed, attempting to walk to via bresenham %s, %s", coordinate.getX(), coordinate.getY());
-            return Traverse.bresenhamWalkTo(coordinate, true, RandomGenerator.nextInt(8, 14));
+            return Traverse.bresenhamWalkTo(coordinate, true, RandomGenerator.nextInt(12, 20));
         }
 
         ScriptConsole.println("[Traverse#to]: Traversal failed.");
@@ -42,7 +42,12 @@ public class Traverse {
     }
 
     public static boolean to(Area area) {
-        return to(area.getRandomWalkableCoordinate());
+        var coordinate = area.getRandomWalkableCoordinate();
+        if (coordinate == null || (coordinate.getX() == 0 && coordinate.getY() == 0)) {
+            ScriptConsole.println("[Traverse#to]: Area#getRandomWalkableCoordinate returned null or (0, 0), picking a random coordinate");
+            coordinate = area.getRandomCoordinate();
+        }
+        return to(coordinate);
     }
 
     public static boolean bresenhamWalkTo(Coordinate coordinate, boolean minimap, int stepSize) {
