@@ -18,6 +18,10 @@ public class Traverse {
     private static final FluentLogger log = FluentLogger.forEnclosingClass();
 
     public static boolean to(Coordinate coordinate) {
+        return to(coordinate, RandomGenerator.nextInt(12, 20));
+    }
+
+    public static boolean to(Coordinate coordinate, int stepSize) {
         var player = Client.getLocalPlayer();
         if (player == null) {
             ScriptConsole.println("[Traverse#to]: Player is null");
@@ -27,14 +31,14 @@ public class Traverse {
         var pCoord = player.getCoordinate();
         if (pCoord != null && (pCoord.getX() > 6400 || pCoord.getY() > 12800)) {
             ScriptConsole.println("[Traverse#to]: Player is in an instance, attempting to walk to %s, %s", coordinate.getX(), coordinate.getY());
-            return Traverse.bresenhamWalkTo(coordinate, true, RandomGenerator.nextInt(12, 20));
+            return Traverse.bresenhamWalkTo(coordinate, true, stepSize);
         }
         TraverseEvent.State webMovement;
         ScriptConsole.println("[Traverse#to]: Player is not in an instance, attempting to walk to %s, %s | %s", coordinate.getX(), coordinate.getY(), webMovement = Movement.traverse(NavPath.resolve(coordinate)));
 
         if (webMovement == null || webMovement == TraverseEvent.State.FAILED || webMovement == TraverseEvent.State.NO_PATH) {
             ScriptConsole.println("[Traverse#to]: WebMovement failed, attempting to walk to via bresenham %s, %s", coordinate.getX(), coordinate.getY());
-            return Traverse.bresenhamWalkTo(coordinate, true, RandomGenerator.nextInt(12, 20));
+            return Traverse.bresenhamWalkTo(coordinate, true, stepSize);
         }
 
         ScriptConsole.println("[Traverse#to]: Traversal failed.");

@@ -73,18 +73,21 @@ public class Dialog {
     @Nullable
     public static String getText() {
         if (isOpen()) {
-            var result = ComponentQuery.newQuery(1184).componentIndex(10).results().first();
-            if (result != null && result.getText() != null) {
-                return result.getText();
-            } else {
-                result = ComponentQuery.newQuery(1189).componentIndex(3).results().first();
+            if (Interfaces.isOpen(1184)) {
+                var result = ComponentQuery.newQuery(1184).componentIndex(10).results().first();
                 if (result != null && result.getText() != null) {
                     return result.getText();
-                } else {
-                    result = ComponentQuery.newQuery(1186).componentIndex(3).results().first();
-                    if (result != null && result.getText() != null) {
-                        return result.getText();
-                    }
+                }
+            } else if (Interfaces.isOpen(1189)) {
+                var result = ComponentQuery.newQuery(1189).componentIndex(3).results().first();
+                if (result != null && result.getText() != null) {
+                    return result.getText();
+
+                }
+            } else if (Interfaces.isOpen(1186)) {
+                var result = ComponentQuery.newQuery(1186).componentIndex(3).results().first();
+                if (result != null && result.getText() != null) {
+                    return result.getText();
                 }
             }
         }
