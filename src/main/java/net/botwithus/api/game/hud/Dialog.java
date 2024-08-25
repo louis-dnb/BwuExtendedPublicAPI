@@ -34,7 +34,7 @@ public class Dialog {
     @NotNull
     public static List<String> getOptions() {
         if (Interfaces.isOpen(1188)) {
-            List<String> options = new ArrayList<>(ComponentQuery.newQuery(1188).type(4).results().stream().map(Component::getText).toList());
+            List<String> options = new ArrayList<>(ComponentQuery.newQuery(1188).componentIndex(6,33,35,37,39).type(4).results().stream().map(Component::getText).toList());
             options.removeIf(result -> result.getBytes(StandardCharsets.UTF_8).length < 3);
             return options;
         }
@@ -55,12 +55,25 @@ public class Dialog {
                         slot = i;
                     }
                 }
-                if (slot != -1) {
-                    int[] opcode = new int[]{77856776, 77856781, 77856786, 77856791, 77856796};
-                    return MiniMenu.interact(16, 0, -1, opcode[slot]);
-                }
+                return interact(slot);
             }
-            return result != null && result.interact();
+        }
+        return false;
+    }
+
+    /**
+     * Interacts with the dialogue interface with the given index. The index is the position of the option in the dialogue, starting at 0.
+     *
+     * @param index The index of the option to interact with.
+     *              If the index is -1, the first option will be selected.
+     * @return True if the interaction was successful, false otherwise.
+     */
+    public static boolean interact(int index) {
+        if (Interfaces.isOpen(1188)) {
+            if (index != -1) {
+                int[] opcode = new int[]{77856776, 77856781, 77856786, 77856791, 77856796};
+                return MiniMenu.interact(ComponentAction.DIALOGUE.getType(), 0, -1, opcode[index]);
+            }
         }
         return false;
     }
