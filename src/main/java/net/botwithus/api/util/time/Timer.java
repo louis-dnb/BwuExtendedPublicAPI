@@ -37,7 +37,7 @@ public class Timer {
     }
 
     public void setExpired() {
-        hasStarted = true;
+        hasStarted = false;
         forceExpired = true;
     }
 
