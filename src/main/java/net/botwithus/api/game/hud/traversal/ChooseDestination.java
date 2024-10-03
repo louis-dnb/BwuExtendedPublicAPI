@@ -4,6 +4,7 @@ import net.botwithus.rs3.game.hud.interfaces.Interfaces;
 import net.botwithus.rs3.game.minimenu.MiniMenu;
 import net.botwithus.rs3.game.minimenu.actions.ComponentAction;
 import net.botwithus.rs3.game.queries.builders.components.ComponentQuery;
+import net.botwithus.rs3.script.ScriptConsole;
 
 public class ChooseDestination {
     private static final int[] INDEX_IDS = {
@@ -15,7 +16,21 @@ public class ChooseDestination {
             47185952,
             47185955,
             47185958,
-            47185961
+            47185961,
+            47185964
+    };
+
+    private static final int[] COMPONENT_INDEXES = {
+            14,
+            21,
+            24,
+            27,
+            30,
+            33,
+            36,
+            39,
+            42,
+            45
     };
     private static final int CAN_SELECT_TEXTURE_ID = 184741, CANNOT_SELECT_TEXTURE_ID = 18508;
 
@@ -30,7 +45,7 @@ public class ChooseDestination {
     }
 
     public static boolean canSelectOption(int index) {
-        var component = ComponentQuery.newQuery(720).spriteId(CAN_SELECT_TEXTURE_ID).results().first();
-        return component != null;
+        var component = ComponentQuery.newQuery(720).componentIndex(COMPONENT_INDEXES[index]).results().first();
+        return component != null && component.getText() != null && component.getText().length() > 2;
     }
 }
