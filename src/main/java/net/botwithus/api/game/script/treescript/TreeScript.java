@@ -17,6 +17,7 @@ import net.botwithus.rs3.script.config.ScriptConfig;
  */
 public abstract class TreeScript extends LoopingScript {
     private BranchTask rootTask;
+    private String definedIn = getClass().getName();
 
     /**
      * Constructs a new TreeScript instance.
@@ -27,6 +28,7 @@ public abstract class TreeScript extends LoopingScript {
      */
     public TreeScript(String name, ScriptConfig scriptConfig, ScriptDefinition scriptDefinition) {
         super(name, scriptConfig, scriptDefinition);
+        this.definedIn = getClass().getName();
     }
 
     /**
@@ -54,5 +56,9 @@ public abstract class TreeScript extends LoopingScript {
         } else {
             rootTask = getRootTask();
         }
+    }
+
+    public String getDefinedIn() {
+        return definedIn;
     }
 }

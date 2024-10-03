@@ -233,7 +233,7 @@ public class Bank {
      */
     public static boolean withdraw(String itemName, int option) {
         if (itemName != null && !itemName.isEmpty()) {
-            return withdraw(InventoryItemQuery.newQuery().name(itemName), option);
+            return withdraw(InventoryItemQuery.newQuery().inventories(95).name(itemName), option);
         }
         return false;
     }
@@ -247,7 +247,7 @@ public class Bank {
      */
     public static boolean withdraw(int itemId, int option) {
         if (itemId >= 0) {
-            return withdraw(InventoryItemQuery.newQuery().ids(itemId), option);
+            return withdraw(InventoryItemQuery.newQuery().inventories(95).ids(itemId), option);
         }
         return false;
     }
@@ -261,7 +261,7 @@ public class Bank {
      */
     public static boolean withdraw(Pattern pattern, int option) {
         if (pattern != null) {
-            return withdraw(InventoryItemQuery.newQuery().name(pattern), option);
+            return withdraw(InventoryItemQuery.newQuery().inventories(95).name(pattern), option);
         }
         return false;
     }
@@ -273,15 +273,15 @@ public class Bank {
      * @return true if the item was successfully withdrawn, false otherwise.
      */
     public static boolean withdrawAll(String name) {
-        return withdraw(InventoryItemQuery.newQuery().name(name), 1);
+        return withdraw(InventoryItemQuery.newQuery().inventories(95).name(name), 1);
     }
 
     public static boolean withdrawAll(int id) {
-        return withdraw(InventoryItemQuery.newQuery().ids(id), 1);
+        return withdraw(InventoryItemQuery.newQuery().inventories(95).ids(id), 1);
     }
 
     public static boolean withdrawAll(Pattern pattern) {
-        return withdraw(InventoryItemQuery.newQuery().name(pattern), 1);
+        return withdraw(InventoryItemQuery.newQuery().inventories(95).name(pattern), 1);
     }
 
     /**
