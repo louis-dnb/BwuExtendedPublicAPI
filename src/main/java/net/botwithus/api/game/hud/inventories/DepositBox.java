@@ -1,11 +1,16 @@
 package net.botwithus.api.game.hud.inventories;
 
+import net.botwithus.rs3.game.*;
 import net.botwithus.rs3.game.Item;
 import net.botwithus.rs3.game.hud.interfaces.Component;
 import net.botwithus.rs3.game.hud.interfaces.Interfaces;
+import net.botwithus.rs3.game.minimenu.*;
+import net.botwithus.rs3.game.minimenu.actions.*;
 import net.botwithus.rs3.game.queries.builders.components.ComponentQuery;
 import net.botwithus.rs3.game.queries.builders.items.InventoryItemQuery;
 import net.botwithus.rs3.game.queries.builders.objects.SceneObjectQuery;
+import net.botwithus.rs3.game.queries.results.*;
+import net.botwithus.rs3.script.*;
 import net.botwithus.rs3.script.ScriptConsole;
 import net.botwithus.rs3.util.Regex;
 
@@ -58,6 +63,34 @@ public final class DepositBox {
     public static boolean depositAll() {
         var result = ComponentQuery.newQuery(11).option("Deposit Carried Items").results().first();
         return result != null && result.interact();
+    }
+
+    public static boolean depositAll(Pattern... patterns) {
+        if (!DepositBox.isOpen()) {
+            if (!DepositBox.open()) {
+                return false;
+            }
+        }
+        ResultSet<Item> itemsToDeposit = InventoryItemQuery.newQuery(new int[]{93}).name(patterns).results();
+        if (itemsToDeposit.size() == 0) {
+            return true;
+        }
+        var slots = itemsToDeposit.stream().mapToInt(Item::getSlot).toArray();
+
+        for (int slotNum : slots) {
+            if (net.botwithus.rs3.game.inventories.Backpack.getSlot(slotNum) == null) {
+                continue;
+            }
+            // don't think I can use a ComponentQuery here
+            if (!MiniMenu.interact(ComponentAction.COMPONENT.getType(), 4, slotNum, 720915)) { // deposit-all at slot_num
+                return false;
+            }
+            if (!Execution.delayUntil(1000, () -> !(net.botwithus.rs3.game.inventories.Backpack.getSlot(slotNum) == null))) {
+                return false;
+            }
+        }
+        DepositBox.close();
+        return true;
     }
 
     public static boolean depositAllExcept(String... itemNames) {
