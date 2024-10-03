@@ -1,6 +1,8 @@
 package net.botwithus.api.game.hud.inventories;
 
 import net.botwithus.rs3.game.*;
+import net.botwithus.rs3.game.Item;
+import net.botwithus.rs3.game.hud.interfaces.Component;
 import net.botwithus.rs3.game.hud.interfaces.Interfaces;
 import net.botwithus.rs3.game.minimenu.*;
 import net.botwithus.rs3.game.minimenu.actions.*;
@@ -9,9 +11,11 @@ import net.botwithus.rs3.game.queries.builders.items.InventoryItemQuery;
 import net.botwithus.rs3.game.queries.builders.objects.SceneObjectQuery;
 import net.botwithus.rs3.game.queries.results.*;
 import net.botwithus.rs3.script.*;
+import net.botwithus.rs3.script.ScriptConsole;
 import net.botwithus.rs3.util.Regex;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -91,21 +95,27 @@ public final class DepositBox {
 
     public static boolean depositAllExcept(String... itemNames) {
         var items = ComponentQuery.newQuery(11).itemName(Regex.getPatternForNotContainingAnyString(itemNames)).option(
-                "Deposit").results();
-        return !items.stream().map(i -> BACKPACK.interact(i.getComponentIndex(), 1)).toList().contains(false);
+                "Deposit-All").results();
+        return depositAllExcept(items.stream().mapToInt(Component::getItemId).toArray());
+//        return !items.stream().map(i -> i.interact(4)).toList().contains(false);
     }
 
     public static boolean depositAllExcept(int... ids) {
         var idSet = Arrays.stream(ids).boxed().collect(Collectors.toSet());
-        var items = InventoryItemQuery.newQuery(93).option("Deposit").results().stream().filter(
-                i -> !idSet.contains(i.getId()));
-        return !items.map(i -> BACKPACK.interact(i.getSlot(), 1)).toList().contains(false);
+        var items = ComponentQuery.newQuery(11).results().stream().filter(i -> !idSet.contains(i.getItemId())).toArray(Component[]::new);
+        var itemIds = Arrays.stream(items).map(Component::getItemId).distinct().toArray();
+        ScriptConsole.println("[DepositBox#depositAllExcept] Items: " + Arrays.toString(itemIds));
+        return !Arrays.stream(items).distinct().map(i -> {
+            var result = i.interact(4);
+            ScriptConsole.println("[DepositBox#depositAllExcept] Interact result: " + result);
+            return result;
+        }).toList().contains(false);
     }
 
     public static boolean depositAllExcept(Pattern... patterns) {
-        var items = InventoryItemQuery.newQuery(93).option("Deposit").results().stream().filter(
-                i -> !Arrays.stream(patterns).map(p -> p.matcher(i.getName()).matches()).toList().contains(true));
-        return !items.map(i -> BACKPACK.interact(i.getSlot(), 1)).toList().contains(false);
+        var itemIds = InventoryItemQuery.newQuery(93).name(patterns).results().stream().mapToInt(Item::getId).toArray();
+        var itemIds2 = Backpack.getItems().stream().filter(i -> Arrays.stream(patterns).anyMatch(p -> i.getName() != null && p.matcher(i.getName()).matches())).mapToInt(Item::getId).toArray();
+        return depositAllExcept(itemIds2);
     }
 
     /**

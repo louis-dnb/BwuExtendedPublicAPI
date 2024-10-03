@@ -47,17 +47,27 @@ public final class Prayer {
      * @return the maximum number of prayer points a player can have
      */
     public static int getMaxPrayerPoints() {
-        return Skills.PRAYER.getActualLevel() * 10;
+        return VarManager.getVarbitValue(16738) * 10;
     }
 
     /**
      * Checks if the given {@link PrayerAbility} is active.
      *
      * @param ability the {@link PrayerAbility} to check
-     * @return true if the {@link PrayerAbility} is active, false otherwise
+     * @return true if all {@link PrayerAbility} is active, false otherwise
      */
-    public static boolean isActive(PrayerAbility ability) {
-        return ability.isActive();
+    public static boolean isActive(PrayerAbility... ability) {
+        return Arrays.stream(ability).allMatch(PrayerAbility::isActive);
+    }
+
+    /**
+     * Checks if the given {@link PrayerAbility} is active.
+     *
+     * @param ability the {@link PrayerAbility} to check
+     * @return true if any {@link PrayerAbility} is active, false otherwise
+     */
+    public static boolean isAnyActive(PrayerAbility... ability) {
+        return Arrays.stream(ability).anyMatch(PrayerAbility::isActive);
     }
 
     /**
