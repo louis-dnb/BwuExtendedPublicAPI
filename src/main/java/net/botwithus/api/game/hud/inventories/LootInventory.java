@@ -3,6 +3,8 @@ package net.botwithus.api.game.hud.inventories;
 import net.botwithus.rs3.game.hud.interfaces.Component;
 import net.botwithus.rs3.game.hud.interfaces.Interfaces;
 import net.botwithus.rs3.game.Item;
+import net.botwithus.rs3.game.js5.types.EnumType;
+import net.botwithus.rs3.game.js5.types.configs.ConfigManager;
 import net.botwithus.rs3.game.minimenu.MiniMenu;
 import net.botwithus.rs3.game.minimenu.actions.ComponentAction;
 import net.botwithus.rs3.game.queries.builders.components.ComponentQuery;
@@ -179,10 +181,15 @@ public final class LootInventory {
         return VarManager.getVarbitValue(27943) == 1;
     }
     public static boolean isDecideByMonetaryValueEnabled() {
-        return VarManager.getVarbitValue(17945) == 1;
+        return VarManager.getVarbitValue(27945) == 1;
     }
     public static int getMonetaryValue() {
-        return VarManager.getVarbitValue(17946);
+        int value = VarManager.getVarbitValue(27946);
+        EnumType values = ConfigManager.getEnumType(375);
+        if (values != null) {
+            return (int) values.getOutput(value);
+        }
+        return -1;
     }
 
     public static boolean open() {
