@@ -53,7 +53,9 @@ public enum NormalBook implements PrayerAbility {
     HASTENED_DECAY(48366, 53272),
     ACCELERATED_DECAY(48367, 53272),
     SANCTITY(48368, 53273),
-    PROTECT_FROM_NECROMANCY(48369, 53274);
+    PROTECT_FROM_NECROMANCY(48369, 53274),
+    DIVINE_RAGE(50077, 55729),
+    ECLIPSED_SOUL(50228, 55986);
     private final int structId;
     private final int varbitId;
 
