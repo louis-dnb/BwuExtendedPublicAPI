@@ -3,9 +3,12 @@ package net.botwithus.api.game.hud.inventories;
 import net.botwithus.rs3.game.hud.interfaces.Component;
 import net.botwithus.rs3.game.hud.interfaces.Interfaces;
 import net.botwithus.rs3.game.Item;
+import net.botwithus.rs3.game.js5.types.EnumType;
+import net.botwithus.rs3.game.js5.types.configs.ConfigManager;
 import net.botwithus.rs3.game.minimenu.MiniMenu;
 import net.botwithus.rs3.game.minimenu.actions.ComponentAction;
 import net.botwithus.rs3.game.queries.builders.components.ComponentQuery;
+import net.botwithus.rs3.game.vars.VarManager;
 import net.botwithus.rs3.script.Execution;
 import net.botwithus.rs3.util.RandomGenerator;
 
@@ -116,76 +119,6 @@ public final class LootInventory {
         return LOOT_INVENTORY.containsAnyExcept(names);
     }
 
-    /**
-     * Checks if any item matches the given ids
-     *
-     * @param ids the ids to check the items against
-     * @return true if at least one item matches an id
-     */
-//    public static boolean containsAnyOf(final int... ids) {
-//        return LOOT_INVENTORY.containsAnyOf(ids);
-//    }
-
-    /**
-     * Checks if any item matches the given names
-     *
-     * @param names the names to check the items against
-     * @return true if at least one item matches a name
-     */
-//    public static boolean containsAnyOf(final String... names) {
-//        return LOOT_INVENTORY.containsAnyOf(names);
-//    }
-
-    /**
-     * Checks if any item matches the given names
-     *
-     * @param names the names to check the items against
-     * @return true if at least one item matches a name
-     */
-//    public static boolean containsAnyOf(final Pattern... names) {
-//        return LOOT_INVENTORY.containsAnyOf(names);
-//    }
-
-    /**
-     * Checks if all of the items match the given {@link Predicate filter}
-     *
-     * @param filter the filter to check the items against
-     * @return true if all items match the filter
-     */
-//    public static boolean containsOnly(final Predicate<Item> filter) {
-//        return LOOT_INVENTORY.containsOnly(filter);
-//    }
-
-    /**
-     * Checks if all of the items match the given {@link Predicate filter}s
-     *
-     * @param filters the filters to check the items against
-     * @return true if all items match at least one filter each
-     */
-//    @SafeVarargs
-//    public static boolean containsOnly(final Predicate<Item>... filters) {
-//        return LOOT_INVENTORY.containsOnly(filters);
-//    }
-
-    /**
-     * Checks if all of the items match the given names
-     *
-     * @param names the filters to check the items against
-     * @return true if all items match at least one name each
-     */
-//    public static boolean containsOnly(final String... names) {
-//        return LOOT_INVENTORY.containsOnly(names);
-//    }
-
-    /**
-     * Checks if all of the items match the given names
-     *
-     * @param names the filters to check the items against
-     * @return true if all items match at least one name each
-     */
-//    public static boolean containsOnly(final Pattern... names) {
-//        return LOOT_INVENTORY.containsOnly(names);
-//    }
 
     /**
      * Gets the total quantity of items
@@ -237,14 +170,31 @@ public final class LootInventory {
                 .anyMatch(name -> Objects.equals(name, item.getName()))).toList();
     }
 
-    //TODO: need #getValueOfBit
-//    public static boolean isAreaLootEnabled() {
-//        return VarManager.getVarPlayerValue(LOOT_VARP).getValueOfBit(1) == 1;
-//    }
-//
-//    public static boolean isEnabled() {
-//        return VarManager.getVarPlayerValue(LOOT_VARP).getValueOfBit(0) == 1;
-//    }
+
+    public static boolean isEnabled() {
+        return isMultipleItemsOpenEnabled() && VarManager.getVarbitValue(27943) == 1;
+    }
+    public static boolean isMultipleItemsOpenEnabled() {
+        return VarManager.getVarbitValue(27942) == 1;
+    }
+    public static boolean isAreaLootEnabled() {
+        return VarManager.getVarbitValue(27943) == 1;
+    }
+    public static boolean isDecideByMonetaryValueEnabled() {
+        return VarManager.getVarbitValue(27945) == 1;
+    }
+    public static int getMonetaryValue() {
+        int value = VarManager.getVarbitValue(27946);
+        EnumType values = ConfigManager.getEnumType(375);
+        if (values != null) {
+            return (int) values.getOutput(value);
+        }
+        return -1;
+    }
+
+    public static boolean open() {
+        return isEnabled() && MiniMenu.interact(ComponentAction.COMPONENT.getType(), 7, -1, 1477 << 16 | 7);
+    }
 
     public static boolean isOpen() {
         return Interfaces.isOpen(LOOT_INTERFACE);
