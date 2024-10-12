@@ -185,6 +185,10 @@ public final class LootInventory {
         return VarManager.getVarbitValue(17946);
     }
 
+    public static boolean open() {
+        return isEnabled() && MiniMenu.interact(ComponentAction.COMPONENT.getType(), 7, -1, 1477 << 16 | 7);
+    }
+
     public static boolean isOpen() {
         return Interfaces.isOpen(LOOT_INTERFACE);
     }
